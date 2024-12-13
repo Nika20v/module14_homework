@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Приложение для генерации изображений</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input, button {
+            display: block;
+            margin: 10px 0;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            outline: none;
+        }
+        img {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Приложение для генерации изображений</h1>
+
+    <input type="number" id="width" placeholder="Ширина (от 100 до 300)">
+    <input type="number" id="height" placeholder="Высота (от 100 до 300)">
+    <button type="button" id="generate">Сгенерировать изображение</button>
+
+    <div id="image-container"></div>
+
+    <script>
+        // Получаем элементы input и кнопку
+        const widthInput = document.querySelector('#width');
+        const heightInput = document.querySelector('#height');
+        const generateButton = document.querySelector('#generate');
+        const imageContainer = document.querySelector('#image-container');
+
+        // Функция для обработки клика по кнопке
+        function handleGenerateClick() {
+            // Получаем значения из input
+            const width = parseInt(widthInput.value, 10);
+            const height = parseInt(heightInput.value, 10);
+
+            // Проверяем, находятся ли значения в диапазоне от 100 до 300
+            if (isNaN(width) || width < 100 || width > 300) {
+                console.log('одно из чисел вне диапазона от 100 до 300');
+            } else if (isNaN(height) || height < 100 || height > 300) {
+                console.log('одно из чисел вне диапазона от 100 до 300');
+            } else {
+                // Делаем запрос fetch
+                fetch(`https://dummyimage.com/${width}x${height}/000/fff`)
+                    .then(response => response.text())
+                    .then(data => {
+                        // Выводим данные на экран
+                        imageContainer.innerHTML = data;
+                    });
+            }
+        }
+
+        // Привязываем обработчик клика к кнопке
+        generateButton.addEventListener('click', handleGenerateClick);
+    </script>
+</body>
+</html>
