@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Photo Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0;
+            padding: 0;
+        }
+        .gallery img {
+            margin: 10px;
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <input type="number" placeholder="Введите число от 1 до 10" id="input-number">
+    <button id="fetch-data">Получить данные</button>
+    <div class="error" id="error-message"></div>
+    <div class="gallery" id="photo-gallery"></div>
+
+    <script>
+        document.getElementById('fetch-data').addEventListener('click', fetchData);
+
+        function fetchData() {
+            const inputValue = document.querySelector('#input-number').value;
+
+            if (isNaN(inputValue) || inputValue < 1 || inputValue > 10) {
+                document.getElementById('error-message').textContent = 'Число вне диапазона от 1 до 10';
+                return;
+            }
+
+            const limit = inputValue;
+            const url = `https://jsonplaceholder.typicode.com/photos?_limit=${limit}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const gallery = document.querySelector('.gallery');
+                    data.forEach(photo => {
+                        const image = document.createElement('img');
+                        image.src = photo.url;
+                        image.alt = photo.title;
+                        gallery.appendChild(image);
+                    });
+                })
+                .catch(error => {
+                    console.error('Произошла ошибка при получении данных:', error);
+                });
+        }
+    </script>
+</body>
+</html>

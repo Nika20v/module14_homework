@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Приложение для запросов</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 400px;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 0 auto;
+        }
+        label {
+            margin-bottom: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #f4f4f4;
+        }
+        .result ul {
+            margin: 0;
+            padding: 0;
+        }
+        .result li {
+            list-style: none;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form>
+            <label for="pageNumber">Номер страницы:</label>
+            <input id="pageNumber" type="number" required><br>
+            <label for="limit">Лимит:</label>
+            <input id="limit" type="number" required><br>
+            <button type="button" onclick="handleRequest()">Запрос</button>
+        </form>
+        <div class="error" id="errorMsg"></div>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function handleRequest() {
+            const pageNumberInput = document.getElementById('pageNumber');
+            const limitInput = document.getElementById('limit');
+            const errorMsg = document.getElementById('errorMsg');
+            const resultDiv = document.getElementById('result');
+
+            // Проверка ввода
+            if (!validateInputs(pageNumberInput.value, limitInput.value)) {
+                errorMsg.textContent = "Номер страницы вне диапазона от 1 до 10";
+                return;
+            }
+
+            // Выполнение запроса
+            const page = parseInt(pageNumberInput.value);
+            const limit = parseInt(limitInput.value);
+            if (isNaN(page) || isNaN(limit) || page < 1 || page > 10 || limit < 1 || limit > 10) {
+                errorMsg.textContent = "Номер страницы и лимит вне диапазона от 1 до 10";
+                return;
+            }
+
+            fetch(`https://jsonplaceholder.typicode.com/photos?_page=${page}&_limit=${limit}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Сохранение данных в localStorage
+                    localStorage.setItem('lastRequest', JSON.stringify(data));
+
+                    // Отображение данных
+                    renderResult(data);
+                })
+                .catch(error => {
+                    console.error('Ошибка запроса:', error);
+                    errorMsg.textContent = "Произошла ошибка при выполнении запроса";
+                });
+        }
+
+        function validateInputs(page, limit) {
+            if (isNaN(page) || isNaN(limit) || page < 1 || page > 10 || limit < 1 || limit > 10) {
+                return false;
+            }
+            return true;
+        }
+
+        function renderResult(data) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '';
+        }
+            </script>
